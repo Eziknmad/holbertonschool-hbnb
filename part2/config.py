@@ -20,6 +20,7 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     """Testing environment configuration."""
     TESTING = True
+    DEBUG = True
 
 
 class ProductionConfig(Config):
@@ -27,7 +28,6 @@ class ProductionConfig(Config):
     DEBUG = False
 
 
-# Configuration dictionary
 config = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
