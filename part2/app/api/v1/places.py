@@ -3,18 +3,16 @@ Place API endpoints for HBnB application.
 Handles CRUD operations for Place entities.
 """
 from flask_restx import Namespace, Resource, fields
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services.facade import facade
 
-# Create namespace for places
 api = Namespace('places', description='Place operations')
 
-# Define amenity model for nested representation
 amenity_model = api.model('PlaceAmenity', {
     'id': fields.String(description='Amenity ID'),
     'name': fields.String(description='Amenity name')
 })
 
-# Define user model for nested representation (owner)
 user_model = api.model('PlaceUser', {
     'id': fields.String(description='User ID'),
     'first_name': fields.String(description='User first name'),
@@ -22,18 +20,15 @@ user_model = api.model('PlaceUser', {
     'email': fields.String(description='User email')
 })
 
-# Define place model for API documentation and validation
 place_model = api.model('Place', {
     'title': fields.String(required=True),
     'description': fields.String(required=True),
     'price': fields.Float(required=True),
     'latitude': fields.Float(required=True),
     'longitude': fields.Float(required=True),
-    'owner_id': fields.String(required=True),
     'amenities': fields.List(fields.String, required=False)
 })
 
-# Define response model
 place_response_model = api.model('PlaceResponse', {
     'id': fields.String(),
     'title': fields.String(),
@@ -55,30 +50,29 @@ class PlaceList(Resource):
 
     @api.marshal_list_with(place_response_model)
     def get(self):
-        """Retrieve all places."""
+        """Retrieve all places — PUBLIC endpoint, no token required."""
         places = facade.get_all_places()
         return [
             place.to_dict(include_owner=True, include_amenities=True)
             for place in places
         ], 200
 
+    @jwt_required()
     @api.expect(place_model, validate=True)
     @api.marshal_with(place_response_model, code=201)
     def post(self):
         """
-        Create a new place.
-
-        Returns:
-            201: Place successfully created
-            400: Invalid input data
-            404: Owner or amenity not found
-            500: Internal server error
+        Create a new place — AUTHENTICATED users only.
+        The owner_id is taken from the JWT token, not the request body.
         """
+        current_user_id = get_jwt_identity()
         place_data = api.payload
 
+        # owner_id comes from token, not payload
+        place_data['owner_id'] = current_user_id
+
         required_fields = [
-            'title', 'description', 'price',
-            'latitude', 'longitude', 'owner_id'
+            'title', 'description', 'price', 'latitude', 'longitude'
         ]
         for field in required_fields:
             if field not in place_data or place_data[field] is None:
@@ -120,28 +114,39 @@ class PlaceResource(Resource):
 
     @api.marshal_with(place_response_model)
     def get(self, place_id):
-        """Retrieve a place by ID."""
+        """Retrieve a place by ID — PUBLIC endpoint, no token required."""
         place = facade.get_place(place_id)
         if place is None:
             api.abort(404, f"Place with ID {place_id} not found")
-
         return place.to_dict(
             include_owner=True,
             include_amenities=True
         ), 200
 
+    @jwt_required()
     @api.expect(place_model, validate=False)
     @api.marshal_with(place_response_model)
     def put(self, place_id):
         """
         Update place information.
+        Owners can update their own places.
+        Admins can update any place regardless of ownership.
         """
+        current_user_id = get_jwt_identity()
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+
         place_data = api.payload
 
         existing_place = facade.get_place(place_id)
         if not existing_place:
             api.abort(404, f"Place with ID {place_id} not found")
 
+        # Admins bypass ownership check
+        if not is_admin and existing_place.owner_id != current_user_id:
+            return {'error': 'Unauthorized action'}, 403
+
+        # Prevent changing owner_id
         if 'owner_id' in place_data:
             api.abort(400, "Cannot update owner_id")
 
@@ -185,7 +190,6 @@ class PlaceResource(Resource):
             updated_place = facade.update_place(place_id, filtered_data)
             if not updated_place:
                 api.abort(404, f"Place with ID {place_id} not found")
-
             return updated_place.to_dict(
                 include_owner=True,
                 include_amenities=True
@@ -205,13 +209,12 @@ class PlaceReviewList(Resource):
     """Handles getting reviews for a specific place."""
 
     def get(self, place_id):
-        """Retrieve all reviews for a specific place."""
+        """Retrieve all reviews for a place — PUBLIC endpoint."""
         place = facade.get_place(place_id)
         if not place:
             api.abort(404, f"Place with ID {place_id} not found")
 
         reviews = facade.get_reviews_by_place(place_id)
-
         return [
             {
                 'id': review.id,

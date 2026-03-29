@@ -1,0 +1,593 @@
+/* ============================================================
+   HBnB Part 4 — Styles
+   Warm, refined aesthetic with clean cards and smooth interactions
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ── Variables ── */
+:root {
+  --bg:        #faf8f5;
+  --surface:   #ffffff;
+  --border:    #e8e0d5;
+  --text:      #2c2416;
+  --muted:     #8a7d6b;
+  --accent:    #c8602a;
+  --accent-lt: #f5e8df;
+  --gold:      #d4a843;
+  --radius:    10px;
+  --shadow:    0 2px 12px rgba(44,36,22,0.08);
+  --shadow-md: 0 4px 24px rgba(44,36,22,0.14);
+  --transition: 0.2s ease;
+}
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Header ── */
+header {
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 8px rgba(44,36,22,0.06);
+}
+
+header .logo {
+  height: 38px;
+  width: auto;
+}
+
+header nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+header nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: color var(--transition);
+}
+
+header nav a:hover {
+  color: var(--accent);
+}
+
+.login-button {
+  background-color: var(--accent) !important;
+  color: #fff !important;
+  padding: 0.45rem 1.2rem !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+  transition: background-color var(--transition), transform var(--transition) !important;
+}
+
+.login-button:hover {
+  background-color: #a84e22 !important;
+  transform: translateY(-1px);
+}
+
+/* ── Main ── */
+main {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ── Footer ── */
+footer {
+  background-color: var(--text);
+  color: rgba(255,255,255,0.55);
+  text-align: center;
+  padding: 1.2rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+
+/* ── Filter Section ── */
+#filter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1rem 1.4rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+#filter label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+#filter select,
+#price-filter {
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color var(--transition);
+}
+
+#filter select:focus,
+#price-filter:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ── Places Grid ── */
+#places-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ── Place Card ── */
+.place-card {
+  background: var(--surface);
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 20px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.place-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.place-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 0.85rem;
+}
+
+.place-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: var(--text);
+}
+
+.place-card .price {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+}
+
+.place-card .price span {
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+
+.place-card p {
+  font-size: 0.88rem;
+  color: var(--muted);
+  flex: 1;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.details-button {
+  display: inline-block;
+  background-color: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  padding: 0.55rem 1.1rem;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--transition), transform var(--transition);
+  align-self: flex-start;
+}
+
+.details-button:hover {
+  background-color: #a84e22;
+  transform: translateY(-1px);
+}
+
+/* ── Place Details ── */
+.place-details {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+
+.place-details h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+.place-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin: 1.2rem 0;
+  padding: 1.2rem;
+  background: var(--bg);
+  border-radius: 8px;
+}
+
+.place-info p {
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+.place-info p strong {
+  display: block;
+  font-size: 1rem;
+  color: var(--text);
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+}
+
+.place-info .price-highlight {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.place-details .description {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 1.2rem 0;
+}
+
+.amenities-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+
+.amenity-tag {
+  background: var(--accent-lt);
+  color: var(--accent);
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+/* ── Reviews Section ── */
+#reviews {
+  margin-bottom: 2rem;
+}
+
+#reviews h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  margin-bottom: 1.2rem;
+  color: var(--text);
+}
+
+.review-card {
+  background: var(--surface);
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 20px;
+  box-shadow: var(--shadow);
+}
+
+.review-card .review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.review-card .reviewer {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.review-card .rating {
+  color: var(--gold);
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+
+.review-card .comment {
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ── Add Review Form ── */
+.add-review {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  max-width: 640px;
+}
+
+.add-review h2,
+#add-review h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  margin-bottom: 1.4rem;
+  color: var(--text);
+}
+
+.form label,
+.add-review label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+  margin-top: 1rem;
+}
+
+.form label:first-of-type,
+.add-review label:first-of-type {
+  margin-top: 0;
+}
+
+.form input,
+.form textarea,
+.form select,
+.add-review input,
+.add-review textarea,
+.add-review select {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.92rem;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.form input:focus,
+.form textarea:focus,
+.form select:focus,
+.add-review input:focus,
+.add-review textarea:focus,
+.add-review select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(200,96,42,0.12);
+}
+
+.form textarea,
+.add-review textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.form button[type="submit"],
+.add-review button[type="submit"] {
+  margin-top: 1.4rem;
+  width: 100%;
+  padding: 0.75rem;
+  background-color: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--transition), transform var(--transition);
+}
+
+.form button[type="submit"]:hover,
+.add-review button[type="submit"]:hover {
+  background-color: #a84e22;
+  transform: translateY(-1px);
+}
+
+/* ── Login Page ── */
+.login-container {
+  max-width: 420px;
+  margin: 4rem auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-md);
+}
+
+.login-container h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  margin-bottom: 0.4rem;
+  color: var(--text);
+}
+
+.login-container .subtitle {
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin-bottom: 1.8rem;
+}
+
+.login-container label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+  margin-top: 1rem;
+}
+
+.login-container label:first-of-type {
+  margin-top: 0;
+}
+
+.login-container input {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.92rem;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.login-container input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(200,96,42,0.12);
+}
+
+.login-container button[type="submit"] {
+  margin-top: 1.6rem;
+  width: 100%;
+  padding: 0.75rem;
+  background-color: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--transition), transform var(--transition);
+}
+
+.login-container button[type="submit"]:hover {
+  background-color: #a84e22;
+  transform: translateY(-1px);
+}
+
+.login-error {
+  color: #c0392b;
+  font-size: 0.85rem;
+  margin-top: 0.8rem;
+  text-align: center;
+  min-height: 1.2em;
+}
+
+/* ── Page Titles ── */
+.page-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.3rem;
+}
+
+.page-subtitle {
+  font-size: 0.92rem;
+  color: var(--muted);
+  margin-bottom: 2rem;
+}
+
+/* ── Back Link ── */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  transition: color var(--transition);
+}
+
+.back-link:hover {
+  color: var(--accent);
+}
+
+/* ── Empty State ── */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--muted);
+}
+
+.empty-state p {
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  main {
+    padding: 1.2rem;
+  }
+
+  header {
+    padding: 0 1.2rem;
+  }
+
+  .place-details {
+    padding: 1.2rem;
+  }
+
+  .place-card {
+    margin: 10px 0;
+  }
+
+  .review-card {
+    margin: 10px 0;
+  }
+
+  #places-list {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}

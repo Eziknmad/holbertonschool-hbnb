@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HBnB — Place Details</title>
+  <link rel="icon" type="image/png" href="images/icon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header>
+    <a href="index.html">
+      <img src="images/logo.png" alt="HBnB Logo" class="logo">
+    </a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="login.html" id="login-link" class="login-button">Login</a>
+    </nav>
+  </header>
+
+  <main>
+    <a href="index.html" class="back-link">&#8592; Back to places</a>
+
+    <section id="place-details" class="place-details">
+      <!-- Place details will be populated dynamically -->
+    </section>
+
+    <section id="reviews">
+      <h2>Guest Reviews</h2>
+      <!-- Review cards will be populated dynamically -->
+    </section>
+
+    <section id="add-review" class="add-review">
+      <h2>Add a Review</h2>
+      <form id="review-form" class="form">
+        <label for="review-text">Your experience</label>
+        <textarea
+          id="review-text"
+          name="review-text"
+          placeholder="Share what you loved about this place..."
+          required
+        ></textarea>
+
+        <label for="rating">Rating</label>
+        <select id="rating" name="rating" required>
+          <option value="" disabled selected>Select a rating</option>
+          <option value="5">&#9733;&#9733;&#9733;&#9733;&#9733; — Excellent</option>
+          <option value="4">&#9733;&#9733;&#9733;&#9733;&#9734; — Very Good</option>
+          <option value="3">&#9733;&#9733;&#9733;&#9734;&#9734; — Good</option>
+          <option value="2">&#9733;&#9733;&#9734;&#9734;&#9734; — Fair</option>
+          <option value="1">&#9733;&#9734;&#9734;&#9734;&#9734; — Poor</option>
+        </select>
+
+        <button type="submit">Submit Review</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 HBnB. All rights reserved.</p>
+  </footer>
+
+  <script src="scripts.js"></script>
+</body>
+</html>

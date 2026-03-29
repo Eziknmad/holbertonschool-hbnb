@@ -4,6 +4,7 @@ Defines the User entity with validation and business logic.
 """
 import re
 from app.models.base_model import BaseModel
+from app import bcrypt
 
 
 class User(BaseModel):
@@ -14,10 +15,11 @@ class User(BaseModel):
         first_name (str): User's first name
         last_name (str): User's last name
         email (str): User's email address (unique)
+        password (str): Hashed password (never returned in responses)
         is_admin (bool): Whether the user has admin privileges
     """
 
-    def __init__(self, first_name, last_name, email, is_admin=False):
+    def __init__(self, first_name, last_name, email, password, is_admin=False):
         """
         Initialize a User instance.
 
@@ -25,6 +27,7 @@ class User(BaseModel):
             first_name (str): User's first name
             last_name (str): User's last name
             email (str): User's email address
+            password (str): Plain-text password (will be hashed)
             is_admin (bool): Admin status (default: False)
 
         Raises:
@@ -35,9 +38,39 @@ class User(BaseModel):
         self.last_name = last_name
         self.email = email
         self.is_admin = is_admin
+        self.password = None  # Will be set by hash_password()
 
-        # Validate all attributes
         self.validate()
+        self.hash_password(password)
+
+    def hash_password(self, password):
+        """
+        Hash the password using bcrypt and store it.
+
+        Args:
+            password (str): Plain-text password to hash
+
+        Raises:
+            ValueError: If password is empty or not a string
+        """
+        if not isinstance(password, str) or not password.strip():
+            raise ValueError("Password must be a non-empty string")
+        if len(password) < 6:
+            raise ValueError("Password must be at least 6 characters long")
+
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    def verify_password(self, password):
+        """
+        Verify a plain-text password against the stored hash.
+
+        Args:
+            password (str): Plain-text password to verify
+
+        Returns:
+            bool: True if password matches, False otherwise
+        """
+        return bcrypt.check_password_hash(self.password, password)
 
     def validate(self):
         """
@@ -87,9 +120,10 @@ class User(BaseModel):
     def to_dict(self):
         """
         Convert User instance to dictionary.
+        NOTE: Password is intentionally excluded for security.
 
         Returns:
-            dict: Dictionary representation of the user
+            dict: Dictionary representation of the user (no password)
         """
         return {
             'id': self.id,
@@ -103,4 +137,4 @@ class User(BaseModel):
 
     def __repr__(self):
         """String representation of User."""
-        return f"<User {self.id} - {self.email}>"
+        return f"<User {self.email}>"

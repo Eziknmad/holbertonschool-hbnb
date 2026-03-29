@@ -44,11 +44,12 @@ class HBnBFacade:
         if existing_user:
             raise ValueError("Email already registered")
 
-        # Create user
+        # Create user — password is hashed inside User.__init__()
         user = User(
             first_name=user_data.get('first_name'),
             last_name=user_data.get('last_name'),
             email=user_data.get('email'),
+            password=user_data.get('password'),
             is_admin=user_data.get('is_admin', False)
         )
 
@@ -79,6 +80,10 @@ class HBnBFacade:
             existing = self.get_user_by_email(user_data['email'])
             if existing:
                 raise ValueError("Email already registered")
+
+        # Handle password separately — must be hashed, not stored plain
+        if 'password' in user_data:
+            user.hash_password(user_data.pop('password'))
 
         # Update and validate
         updated_user = self.user_repo.update(user_id, user_data)

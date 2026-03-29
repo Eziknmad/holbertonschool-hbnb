@@ -3,6 +3,7 @@ Amenity API endpoints for HBnB application.
 Handles CRUD operations for Amenity entities.
 """
 from flask_restx import Namespace, Resource, fields
+from flask_jwt_extended import jwt_required, get_jwt
 from app.services.facade import facade
 
 # Create namespace for amenities
@@ -55,7 +56,7 @@ class AmenityList(Resource):
     @api.marshal_list_with(amenity_response_model, code=200)
     def get(self):
         """
-        Retrieve a list of all amenities.
+        Retrieve a list of all amenities — PUBLIC endpoint.
 
         Returns:
             200: List of all amenities
@@ -67,29 +68,34 @@ class AmenityList(Resource):
         except Exception as e:
             api.abort(500, f"Internal server error: {str(e)}")
 
+    @jwt_required()
     @api.doc('create_amenity')
     @api.expect(amenity_model, validate=True)
     @api.marshal_with(amenity_response_model, code=201)
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Admin privileges required')
     def post(self):
         """
-        Create a new amenity.
+        Create a new amenity — ADMIN only.
 
         Returns:
             201: Amenity successfully created
             400: Invalid input data
+            403: Admin privileges required
             500: Internal server error
         """
+        claims = get_jwt()
+
+        if not claims.get('is_admin'):
+            return {'error': 'Admin privileges required'}, 403
+
         try:
             amenity_data = api.payload
 
-            # Validate required fields
             if 'name' not in amenity_data or not amenity_data['name']:
                 api.abort(400, "Missing required field: name")
 
-            # Create amenity through facade
             new_amenity = facade.create_amenity(amenity_data)
-
             return new_amenity.to_dict(), 201
 
         except ValueError as e:
@@ -108,10 +114,7 @@ class AmenityResource(Resource):
     @api.response(404, 'Amenity not found')
     def get(self, amenity_id):
         """
-        Retrieve an amenity by ID.
-
-        Args:
-            amenity_id: The unique identifier of the amenity
+        Retrieve an amenity by ID — PUBLIC endpoint.
 
         Returns:
             200: Amenity details
@@ -131,33 +134,36 @@ class AmenityResource(Resource):
                 api.abort(404, str(e))
             api.abort(500, f"Internal server error: {str(e)}")
 
+    @jwt_required()
     @api.doc('update_amenity')
     @api.expect(amenity_model, validate=False)
     @api.marshal_with(amenity_response_model, code=200)
-    @api.response(404, 'Amenity not found')
     @api.response(400, 'Invalid input data')
+    @api.response(403, 'Admin privileges required')
+    @api.response(404, 'Amenity not found')
     def put(self, amenity_id):
         """
-        Update amenity information.
-
-        Args:
-            amenity_id: The unique identifier of the amenity
+        Update amenity information — ADMIN only.
 
         Returns:
             200: Amenity successfully updated
             400: Invalid input data
+            403: Admin privileges required
             404: Amenity not found
             500: Internal server error
         """
+        claims = get_jwt()
+
+        if not claims.get('is_admin'):
+            return {'error': 'Admin privileges required'}, 403
+
         try:
             amenity_data = api.payload
 
-            # Check if amenity exists
             existing_amenity = facade.get_amenity(amenity_id)
             if not existing_amenity:
                 api.abort(404, f"Amenity with ID {amenity_id} not found")
 
-            # Filter out fields that shouldn't be updated
             allowed_fields = ['name', 'description']
             filtered_data = {
                 k: v for k, v in amenity_data.items()
@@ -167,7 +173,6 @@ class AmenityResource(Resource):
             if not filtered_data:
                 api.abort(400, "No valid fields to update")
 
-            # Update amenity through facade
             updated_amenity = facade.update_amenity(
                 amenity_id,
                 filtered_data
